@@ -10,12 +10,25 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfessionalsRouteImport } from './routes/professionals'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
 import { Route as PropertiesIndexRouteImport } from './routes/properties.index'
 import { Route as PropertiesIdRouteImport } from './routes/properties.$id'
+import { Route as DashboardCaseIdRouteImport } from './routes/dashboard.case.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfessionalsRoute = ProfessionalsRouteImport.update({
+  id: '/professionals',
+  path: '/professionals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PropertiesIndexRoute = PropertiesIndexRouteImport.update({
@@ -28,35 +41,71 @@ const PropertiesIdRoute = PropertiesIdRouteImport.update({
   path: '/properties/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardCaseIdRoute = DashboardCaseIdRouteImport.update({
+  id: '/dashboard/case/$id',
+  path: '/dashboard/case/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/professionals': typeof ProfessionalsRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/dashboard/case/$id': typeof DashboardCaseIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/professionals': typeof ProfessionalsRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/dashboard': typeof DashboardIndexRoute
   '/properties': typeof PropertiesIndexRoute
+  '/dashboard/case/$id': typeof DashboardCaseIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/professionals': typeof ProfessionalsRoute
   '/properties/$id': typeof PropertiesIdRoute
+  '/dashboard/': typeof DashboardIndexRoute
   '/properties/': typeof PropertiesIndexRoute
+  '/dashboard/case/$id': typeof DashboardCaseIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/properties/$id' | '/properties/'
+  fullPaths:
+    | '/'
+    | '/professionals'
+    | '/properties/$id'
+    | '/dashboard/'
+    | '/properties/'
+    | '/dashboard/case/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/properties/$id' | '/properties'
-  id: '__root__' | '/' | '/properties/$id' | '/properties/'
+  to:
+    | '/'
+    | '/professionals'
+    | '/properties/$id'
+    | '/dashboard'
+    | '/properties'
+    | '/dashboard/case/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/professionals'
+    | '/properties/$id'
+    | '/dashboard/'
+    | '/properties/'
+    | '/dashboard/case/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ProfessionalsRoute: typeof ProfessionalsRoute
   PropertiesIdRoute: typeof PropertiesIdRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
   PropertiesIndexRoute: typeof PropertiesIndexRoute
+  DashboardCaseIdRoute: typeof DashboardCaseIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -66,6 +115,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/professionals': {
+      id: '/professionals'
+      path: '/professionals'
+      fullPath: '/professionals'
+      preLoaderRoute: typeof ProfessionalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/properties/': {
@@ -82,13 +145,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PropertiesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/case/$id': {
+      id: '/dashboard/case/$id'
+      path: '/dashboard/case/$id'
+      fullPath: '/dashboard/case/$id'
+      preLoaderRoute: typeof DashboardCaseIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProfessionalsRoute: ProfessionalsRoute,
   PropertiesIdRoute: PropertiesIdRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
   PropertiesIndexRoute: PropertiesIndexRoute,
+  DashboardCaseIdRoute: DashboardCaseIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
