@@ -13,7 +13,7 @@ export function RequestModal({ p, onClose }: { p: Property; onClose: () => void 
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState(t("req.messageDefault"));
   const [contact, setContact] = useState("email");
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<{ name?: string; email?: string; message?: string }>({});
   const [state, setState] = useState<"form" | "sending" | "done">("form");
   const first = useRef<HTMLInputElement>(null);
 
@@ -26,7 +26,7 @@ export function RequestModal({ p, onClose }: { p: Property; onClose: () => void 
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
-    const errs: Record<string, string> = {};
+    const errs: { name?: string; email?: string; message?: string } = {};
     if (!name.trim()) errs.name = t("req.err.name");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errs.email = t("req.err.email");
     if (message.trim().length < 10) errs.message = t("req.err.message");

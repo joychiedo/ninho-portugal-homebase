@@ -6,7 +6,7 @@ import { FEATURES, properties, REGIONS, TYPES, type Feature } from "@/data/prope
 import { DemoTag, Page, PropertyCard, btnOutline, inputCls } from "@/components/site";
 import { cn } from "@/lib/utils";
 
-type S = { location?: string; type?: string; min?: number; max?: number; beds?: number; features?: string; sort?: string };
+type S = { location?: string | undefined; type?: string | undefined; min?: number | undefined; max?: number | undefined; beds?: number | undefined; features?: string | undefined; sort?: string | undefined };
 
 const num = (v: unknown) => (v === undefined || v === "" || isNaN(Number(v)) ? undefined : Number(v));
 const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);

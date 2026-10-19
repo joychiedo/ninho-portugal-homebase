@@ -212,7 +212,7 @@ export function DemoTag() {
   return <span className="inline-block border border-terracotta/40 bg-terracotta-soft px-2 py-0.5 text-[11px] uppercase tracking-wider text-foreground">{t("demo.tag")}</span>;
 }
 
-export function Field({ label, htmlFor, children, error }: { label: string; htmlFor: string; children: ReactNode; error?: string }) {
+export function Field({ label, htmlFor, children, error }: { label: string; htmlFor: string; children: ReactNode; error?: string | undefined }) {
   return (
     <div>
       <label htmlFor={htmlFor} className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</label>
