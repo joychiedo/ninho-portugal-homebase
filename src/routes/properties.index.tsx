@@ -13,13 +13,13 @@ const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
 
 export const Route = createFileRoute("/properties/")({
   validateSearch: (s: Record<string, unknown>): S => ({
-    location: str(s.location),
-    type: str(s.type),
-    min: num(s.min),
-    max: num(s.max),
-    beds: num(s.beds),
-    features: str(s.features),
-    sort: str(s.sort),
+    location: str(s["location"]),
+    type: str(s["type"]),
+    min: num(s["min"]),
+    max: num(s["max"]),
+    beds: num(s["beds"]),
+    features: str(s["features"]),
+    sort: str(s["sort"]),
   }),
   head: () => ({
     meta: [
