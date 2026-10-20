@@ -9,14 +9,15 @@ import { DemoTag, LangToggle, Page, inputCls } from "@/components/site";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/dashboard/case/$id")({
-  head: () => ({
+  head: ({ params }) => ({
     meta: [
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { title: "Case workspace — NINHO" },
-      { name: "description", content: "Milestones, tasks, appointments and an illustrative document checklist for a sample purchase." },
-      { property: "og:title", content: "Case workspace — NINHO" },
-      { property: "og:description", content: "A fictional buyer's purchase case in Portugal." },
+      { title: params.id === buyerCase.id ? "Case workspace — NINHO" : "Case unavailable — NINHO" },
+      { name: "description", content: params.id === buyerCase.id ? "Milestones, tasks, appointments and an illustrative document checklist for a sample purchase." : "This case is not available in the NINHO demo." },
+      { property: "og:title", content: params.id === buyerCase.id ? "Case workspace — NINHO" : "Case unavailable — NINHO" },
+      { property: "og:description", content: params.id === buyerCase.id ? "A fictional buyer's purchase case in Portugal." : "This case is not available in the NINHO demo." },
+      ...(params.id === buyerCase.id ? [] : [{ name: "robots", content: "noindex" }]),
     ],
   }),
   component: CasePage,
