@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/dashboard/case/$id")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Case workspace — NINHO" },
       { name: "description", content: "Milestones, tasks, appointments and an illustrative document checklist for a sample purchase." },
       { property: "og:title", content: "Case workspace — NINHO" },

@@ -10,6 +10,8 @@ import { DemoTag, LangToggle, Page, PropertyCard, btnPrimary } from "@/component
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Buyer workspace — NINHO" },
       { name: "description", content: "A sample buyer's overview: journey stage, deadlines, tasks, saved homes and professionals." },
       { property: "og:title", content: "Buyer workspace — NINHO" },

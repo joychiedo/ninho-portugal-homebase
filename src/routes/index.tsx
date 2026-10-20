@@ -11,6 +11,8 @@ import { Page, PropertyCard, btnOutline, btnPrimary, inputCls } from "@/componen
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "NINHO — Find property in Portugal and coordinate your purchase" },
       { name: "description", content: "Discover homes in Lisbon, Porto, Cascais and the Algarve, and organise tasks, documents and professionals for your purchase." },
       { property: "og:title", content: "NINHO — Property in Portugal, coordinated" },

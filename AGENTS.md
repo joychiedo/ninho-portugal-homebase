@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep NINHO demo state browser-local and validate restored records against typed sample data; the prototype must never transmit sensitive inputs.
+- Centralize property URL validation and filtering in the search helper so deep links and UI controls use identical rules.
+- Derive progress and next recommended tasks from current task state; milestones and document statuses stay illustrative.
+- Use accessible dialog primitives for requests and cancel pending demo recording on dismissal so keyboard and cancellation behavior stays reliable.

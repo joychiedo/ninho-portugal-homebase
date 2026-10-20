@@ -14,6 +14,8 @@ export const Route = createFileRoute("/properties/")({
   validateSearch: validatePropertySearch,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Explore properties in Portugal — NINHO" },
       { name: "description", content: "Search fictional sample homes in Lisbon, Porto, Cascais and the Algarve by price, type, bedrooms and features." },
       { property: "og:title", content: "Explore properties in Portugal — NINHO" },

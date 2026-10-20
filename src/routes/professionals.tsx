@@ -10,6 +10,8 @@ import { DemoTag, Page, btnOutline, inputCls } from "@/components/site";
 export const Route = createFileRoute("/professionals")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Professional directory — NINHO" },
       { name: "description", content: "Fictional demo profiles of lawyers, brokers and relocation consultants in Portugal." },
       { property: "og:title", content: "Professional directory — NINHO" },

@@ -20,6 +20,8 @@ export const Route = createFileRoute("/properties/$id")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
+          { property: "og:type", content: "website" },
+          { name: "twitter:card", content: "summary_large_image" },
           { title: `${loaderData.title} — NINHO` },
           { name: "description", content: loaderData.summary },
           { property: "og:title", content: `${loaderData.title} — NINHO` },
@@ -138,7 +140,7 @@ function Detail() {
               <p className="mt-1 text-xs text-muted-foreground">{t("prop.listedBy")}</p>
               <p className="mt-6 text-sm text-muted-foreground">{t("prop.requestBody")}</p>
               <div className="mt-5 flex flex-col gap-3">
-                <Button variant="ghost" type="button" disabled={isRequested} onClick={() => setOpen(true)} className={btnPrimary}>
+                <Button variant="ghost" type="button" data-request-trigger onClick={() => setOpen(true)} className={btnPrimary}>
                   {isRequested ? <><Check className="h-4 w-4" />{t("req.done")}</> : t("prop.request")}
                 </Button>
                 <FavButton id={p.id} name={p.title} variant="full" />
