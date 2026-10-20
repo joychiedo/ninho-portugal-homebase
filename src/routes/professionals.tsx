@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { useI18n, localizeLocation } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 import { professionals, type ProCategory } from "@/data/case";
 import { DemoTag, Page, btnOutline, inputCls } from "@/components/site";
@@ -9,6 +10,8 @@ import { DemoTag, Page, btnOutline, inputCls } from "@/components/site";
 export const Route = createFileRoute("/professionals")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Professional directory — NINHO" },
       { name: "description", content: "Fictional demo profiles of lawyers, brokers and relocation consultants in Portugal." },
       { property: "og:title", content: "Professional directory — NINHO" },
@@ -21,7 +24,7 @@ export const Route = createFileRoute("/professionals")({
 const CATS: ProCategory[] = ["legal", "finance", "relocation", "agent", "survey", "tax"];
 
 function Directory() {
-  const { t, l } = useI18n();
+  const { t, l, lang } = useI18n();
   const { intros, addIntro } = useStore();
   const [cat, setCat] = useState("");
   const list = professionals.filter((p) => !cat || p.category === cat);
@@ -51,10 +54,10 @@ function Directory() {
                   </div>
                   <p className="mt-4 text-sm font-medium">{t(`cat.${p.category}`)}</p>
                   <p className="mt-2 flex-1 text-sm text-muted-foreground">{l(p.bio)}</p>
-                  <p className="mt-4 text-xs text-muted-foreground">{t("dir.location")}: {p.location} · {t("dir.languages")}: {p.languages.join(", ")}</p>
-                  <button type="button" disabled={done} onClick={() => addIntro(p.id, p.name)} className={`${btnOutline} mt-5 disabled:opacity-70`}>
+                  <p className="mt-4 text-xs text-muted-foreground">{t("dir.location")}: {localizeLocation(p.location, lang)} · {t("dir.languages")}: {p.languages.join(", ")}</p>
+                  <Button variant="outline" type="button" disabled={done} onClick={() => addIntro(p.id, p.name)} className={`${btnOutline} mt-5 h-auto whitespace-normal disabled:opacity-70`}>
                     {done ? <><Check className="h-4 w-4" />{t("dir.requested")}</> : t("dir.contact")}
-                  </button>
+                  </Button>
                 </li>
               );
             })}

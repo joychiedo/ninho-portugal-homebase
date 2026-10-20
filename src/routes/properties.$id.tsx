@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { validatePropertySearch } from "@/lib/property-search";
 import { useI18n } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 import { getProperty } from "@/data/properties";
@@ -9,6 +11,7 @@ import { RequestModal } from "@/components/RequestModal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/properties/$id")({
+  validateSearch: (s: Record<string, unknown>): ReturnType<typeof validatePropertySearch> & { returnTo?: string | undefined } => ({ ...validatePropertySearch(s), returnTo: s["returnTo"] === "search" ? "search" : undefined }),
   loader: ({ params }) => {
     const p = getProperty(params.id);
     if (!p) throw notFound();
@@ -17,12 +20,22 @@ export const Route = createFileRoute("/properties/$id")({
   head: ({ loaderData }) => ({
     meta: loaderData
       ? [
+          { property: "og:type", content: "website" },
+          { name: "twitter:card", content: "summary_large_image" },
           { title: `${loaderData.title} — NINHO` },
           { name: "description", content: loaderData.summary },
           { property: "og:title", content: `${loaderData.title} — NINHO` },
           { property: "og:description", content: loaderData.summary },
         ]
-      : [{ title: "Property unavailable — NINHO" }, { name: "robots", content: "noindex" }],
+      : [
+          { title: "Property unavailable — NINHO" },
+          { name: "description", content: "This sample property is not available in the NINHO demo." },
+          { property: "og:title", content: "Property unavailable — NINHO" },
+          { property: "og:description", content: "This sample property is not available in the NINHO demo." },
+          { property: "og:type", content: "website" },
+          { name: "twitter:card", content: "summary_large_image" },
+          { name: "robots", content: "noindex" },
+        ],
   }),
   notFoundComponent: NotFound,
   component: Detail,
@@ -42,18 +55,20 @@ function NotFound() {
 
 function Detail() {
   const { id } = Route.useParams();
-  const p = getProperty(id)!;
+  const p = getProperty(id);
+  const search = Route.useSearch();
   const { t, l, price } = useI18n();
   const { requested } = useStore();
   const [idx, setIdx] = useState(0);
   const [open, setOpen] = useState(false);
+  if (!p) return <NotFound />;
   const n = p.images.length;
   const isRequested = requested.includes(p.id);
 
   return (
     <Page>
       <div className="mx-auto max-w-7xl px-5 pt-8 md:px-8">
-        <Link to="/properties" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+        <Link to="/properties" search={search.returnTo ? validatePropertySearch(search) : {}} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" /> {t("prop.back")}
         </Link>
 
@@ -61,28 +76,30 @@ function Detail() {
           <div className="relative">
             <img src={p.images[idx]} alt={`${l(p.title)} — ${t("prop.photo", { i: idx + 1, n })}`} width={1200} height={912} className="aspect-[4/3] w-full object-cover lg:aspect-[16/11]" />
             <div className="absolute bottom-4 right-4 flex items-center gap-2">
-              <button type="button" aria-label={t("prop.prev")} onClick={() => setIdx((idx - 1 + n) % n)} className="flex h-10 w-10 items-center justify-center bg-card"><ChevronLeft className="h-5 w-5" /></button>
+              <Button variant="ghost" type="button" aria-label={t("prop.prev")} onClick={() => setIdx((idx - 1 + n) % n)} className="flex h-11 w-11 p-0 items-center justify-center bg-card"><ChevronLeft className="h-5 w-5" /></Button>
               <span className="bg-card px-3 py-2 text-xs" aria-live="polite">{idx + 1} / {n}</span>
-              <button type="button" aria-label={t("prop.next")} onClick={() => setIdx((idx + 1) % n)} className="flex h-10 w-10 items-center justify-center bg-card"><ChevronRight className="h-5 w-5" /></button>
+              <Button variant="ghost" type="button" aria-label={t("prop.next")} onClick={() => setIdx((idx + 1) % n)} className="flex h-11 w-11 p-0 items-center justify-center bg-card"><ChevronRight className="h-5 w-5" /></Button>
             </div>
           </div>
           <div className="hidden grid-rows-2 gap-3 lg:grid">
             {p.images.map((src, i) =>
               i === idx ? null : (
-                <button key={i} type="button" onClick={() => setIdx(i)} aria-label={t("prop.photo", { i: i + 1, n })} className="overflow-hidden">
+                <Button variant="ghost" key={i} type="button" onClick={() => setIdx(i)} aria-label={t("prop.photo", { i: i + 1, n })} className="h-auto rounded-none p-0 overflow-hidden">
                   <img src={src} alt="" loading="lazy" className="h-full w-full object-cover transition-opacity hover:opacity-85" />
-                </button>
+                </Button>
               ),
             )}
           </div>
           <div className="flex gap-2 lg:hidden">
             {p.images.map((src, i) => (
-              <button key={i} type="button" onClick={() => setIdx(i)} aria-label={t("prop.photo", { i: i + 1, n })} aria-current={i === idx} className={cn("h-16 w-20 overflow-hidden border-2", i === idx ? "border-primary" : "border-transparent")}>
+              <Button variant="ghost" key={i} type="button" onClick={() => setIdx(i)} aria-label={t("prop.photo", { i: i + 1, n })} aria-current={i === idx} className={cn("h-16 w-20 p-0 overflow-hidden border-2", i === idx ? "border-primary" : "border-transparent")}>
                 <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" />
-              </button>
+              </Button>
             ))}
           </div>
         </div>
+
+        <p className="mt-3 text-xs text-muted-foreground">{t("prop.imageNote")}</p>
 
         <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_360px]">
           <div>
@@ -131,9 +148,9 @@ function Detail() {
               <p className="mt-1 text-xs text-muted-foreground">{t("prop.listedBy")}</p>
               <p className="mt-6 text-sm text-muted-foreground">{t("prop.requestBody")}</p>
               <div className="mt-5 flex flex-col gap-3">
-                <button type="button" onClick={() => setOpen(true)} className={btnPrimary}>
+                <Button variant="ghost" type="button" data-request-trigger onClick={() => setOpen(true)} className={btnPrimary}>
                   {isRequested ? <><Check className="h-4 w-4" />{t("req.done")}</> : t("prop.request")}
-                </button>
+                </Button>
                 <FavButton id={p.id} name={p.title} variant="full" />
               </div>
             </div>

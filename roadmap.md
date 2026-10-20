@@ -1,0 +1,4 @@
+- [x] Audit original requirements, translations, navigation and sample consistency.
+- [x] Fix verified gaps without redesigning working sections.
+- [x] Test the complete buyer journey, desktop/mobile layouts and edge states.
+- [x] Report verified results and prototype limitations: imagery remains generated and illustrative, not authentic listing photography; all data and actions remain local demo behavior.

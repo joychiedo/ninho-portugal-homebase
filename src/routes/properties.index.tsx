@@ -2,27 +2,20 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
-import { FEATURES, properties, REGIONS, TYPES, type Feature } from "@/data/properties";
+import { FEATURES, REGIONS, TYPES, type Feature } from "@/data/properties";
 import { DemoTag, Page, PropertyCard, btnOutline, inputCls } from "@/components/site";
+import { searchProperties, validatePropertySearch, type PropertySearch as S } from "@/lib/property-search";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-type S = { location?: string | undefined; type?: string | undefined; min?: number | undefined; max?: number | undefined; beds?: number | undefined; features?: string | undefined; sort?: string | undefined };
-
-const num = (v: unknown) => (v === undefined || v === "" || isNaN(Number(v)) ? undefined : Number(v));
-const str = (v: unknown) => (typeof v === "string" && v ? v : undefined);
+const num = (v: string) => v === "" ? undefined : Number(v);
 
 export const Route = createFileRoute("/properties/")({
-  validateSearch: (s: Record<string, unknown>): S => ({
-    location: str(s["location"]),
-    type: str(s["type"]),
-    min: num(s["min"]),
-    max: num(s["max"]),
-    beds: num(s["beds"]),
-    features: str(s["features"]),
-    sort: str(s["sort"]),
-  }),
+  validateSearch: validatePropertySearch,
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Explore properties in Portugal — NINHO" },
       { name: "description", content: "Search fictional sample homes in Lisbon, Porto, Cascais and the Algarve by price, type, bedrooms and features." },
       { property: "og:title", content: "Explore properties in Portugal — NINHO" },
@@ -50,21 +43,7 @@ function Explore() {
     return () => clearTimeout(id);
   }, [s.location, s.type, s.min, s.max, s.beds, s.features, s.sort]);
 
-  const results = useMemo(() => {
-    let r = properties.filter(
-      (p) =>
-        (!s.location || p.region === s.location) &&
-        (!s.type || p.type === s.type) &&
-        (s.min === undefined || p.price >= s.min) &&
-        (s.max === undefined || p.price <= s.max) &&
-        (s.beds === undefined || p.beds >= s.beds) &&
-        feats.every((f) => p.features.includes(f)),
-    );
-    if (s.sort === "priceAsc") r = [...r].sort((a, b) => a.price - b.price);
-    if (s.sort === "priceDesc") r = [...r].sort((a, b) => b.price - a.price);
-    if (s.sort === "area") r = [...r].sort((a, b) => b.size - a.size);
-    return r;
-  }, [s, feats]);
+  const results = useMemo(() => searchProperties(s), [s]);
 
   const toggleFeat = (f: Feature) => {
     const next = feats.includes(f) ? feats.filter((x) => x !== f) : [...feats, f];
@@ -105,11 +84,12 @@ function Explore() {
           </select>
         </div>
       </div>
+      {s.min !== undefined && s.max !== undefined && s.min > s.max && <p role="alert" className="text-sm text-destructive">{t("explore.priceError")}</p>}
       <fieldset>
         <legend className="eyebrow mb-2">{t("explore.bedrooms")}</legend>
         <div className="flex border border-border">
           {[undefined, 1, 2, 3, 4, 5].map((b) => (
-            <button
+            <Button variant="ghost"
               key={b ?? "any"}
               type="button"
               aria-pressed={s.beds === b}
@@ -117,7 +97,7 @@ function Explore() {
               className={cn("flex-1 border-r border-border py-2 text-sm last:border-r-0", s.beds === b ? "bg-foreground text-background" : "bg-card hover:bg-secondary")}
             >
               {b === undefined ? t("explore.anyBeds") : `${b}+`}
-            </button>
+            </Button>
           ))}
         </div>
       </fieldset>
@@ -125,7 +105,7 @@ function Explore() {
         <legend className="eyebrow mb-2">{t("explore.features")}</legend>
         <div className="flex flex-wrap gap-2">
           {FEATURES.map((f) => (
-            <button
+            <Button variant="ghost"
               key={f}
               type="button"
               aria-pressed={feats.includes(f)}
@@ -133,14 +113,14 @@ function Explore() {
               className={cn("border px-3 py-1.5 text-sm", feats.includes(f) ? "border-primary bg-forest-soft text-primary" : "border-border bg-card hover:border-foreground")}
             >
               {t(`feat.${f}`)}
-            </button>
+            </Button>
           ))}
         </div>
       </fieldset>
       {hasFilters && (
-        <button type="button" onClick={() => navigate({ search: { sort: s.sort }, replace: true })} className="text-sm underline underline-offset-4">
+        <Button variant="ghost" type="button" onClick={() => navigate({ search: { sort: s.sort }, replace: true })} className="text-sm underline underline-offset-4">
           {t("explore.reset")}
-        </button>
+        </Button>
       )}
     </div>
   );
@@ -154,12 +134,12 @@ function Explore() {
           <p aria-live="polite" className="text-sm">
             {updating ? t("explore.updating") : results.length === 1 ? t("explore.count1") : t("explore.count", { n: results.length })}
           </p>
-          <div className="flex items-center gap-3">
-            <button type="button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters} className="inline-flex items-center gap-2 border border-border px-3 py-2 text-sm lg:hidden">
+          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
+            <Button variant="ghost" type="button" onClick={() => setShowFilters((v) => !v)} aria-expanded={showFilters} className="inline-flex items-center gap-2 border border-border px-3 py-2 text-sm lg:hidden">
               <SlidersHorizontal className="h-4 w-4" />{showFilters ? t("explore.hideFilters") : t("explore.showFilters")}
-            </button>
+            </Button>
             <label htmlFor="f-sort" className="sr-only">{t("explore.sort")}</label>
-            <select id="f-sort" className={`${inputCls} w-auto`} value={s.sort ?? "featured"} onChange={(e) => set({ sort: e.target.value === "featured" ? undefined : e.target.value })}>
+            <select id="f-sort" className={`${inputCls} min-w-0 flex-1 sm:w-auto`} value={s.sort ?? "featured"} onChange={(e) => set({ sort: e.target.value === "featured" ? undefined : e.target.value })}>
               <option value="featured">{t("explore.sort")}: {t("explore.sort.featured")}</option>
               <option value="priceAsc">{t("explore.sort.priceAsc")}</option>
               <option value="priceDesc">{t("explore.sort.priceDesc")}</option>
@@ -176,11 +156,11 @@ function Explore() {
               <div className="border border-dashed border-border bg-card px-6 py-20 text-center">
                 <h2 className="text-2xl">{t("explore.empty.t")}</h2>
                 <p className="mt-2 text-muted-foreground">{t("explore.empty.b")}</p>
-                <button type="button" onClick={() => navigate({ search: {}, replace: true })} className={`${btnOutline} mt-6`}>{t("explore.reset")}</button>
+                <Button variant="ghost" type="button" onClick={() => navigate({ search: {}, replace: true })} className={`${btnOutline} mt-6`}>{t("explore.reset")}</Button>
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {results.map((p) => <PropertyCard key={p.id} p={p} />)}
+                {results.map((p) => <PropertyCard key={p.id} p={p} search={s} />)}
               </div>
             )}
           </div>

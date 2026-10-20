@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+import { nextTask } from "@/lib/demo-state";
 import { useI18n } from "@/lib/i18n";
 import { progressOf, useStore } from "@/lib/store";
 import { buyerCase, getPro } from "@/data/case";
@@ -9,6 +10,8 @@ import { DemoTag, LangToggle, Page, PropertyCard, btnPrimary } from "@/component
 export const Route = createFileRoute("/dashboard/")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { title: "Buyer workspace — NINHO" },
       { name: "description", content: "A sample buyer's overview: journey stage, deadlines, tasks, saved homes and professionals." },
       { property: "og:title", content: "Buyer workspace — NINHO" },
@@ -22,6 +25,7 @@ function Dashboard() {
   const { t, l, date } = useI18n();
   const { tasks, favourites, activity } = useStore();
   const pct = progressOf(tasks);
+  const next = nextTask(tasks);
   const open = tasks.filter((x) => x.status !== "done").sort((a, b) => a.due.localeCompare(b.due));
   const saved = favourites.map(getProperty).filter((p) => !!p);
 
@@ -49,7 +53,7 @@ function Dashboard() {
           </div>
           <div className="bg-card p-6">
             <p className="eyebrow">{t("dash.next")}</p>
-            <p className="mt-2 text-sm">{l(buyerCase.nextAction)}</p>
+            <p className="mt-2 text-sm">{next ? l(next.title) : t("dash.allDone")}</p>
           </div>
         </div>
         <Link to="/dashboard/case/$id" params={{ id: buyerCase.id }} className={`${btnPrimary} mt-6`}>{t("dash.openCase")} <ArrowRight className="h-4 w-4" /></Link>
@@ -96,7 +100,7 @@ function Dashboard() {
               <Link to="/properties" className={`${btnPrimary} mt-4`}>{t("dash.savedCta")}</Link>
             </div>
           ) : (
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{saved.map((p) => <PropertyCard key={p!.id} p={p!} />)}</div>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{saved.map((p) => <PropertyCard key={p.id} p={p} />)}</div>
           )}
         </section>
       </div>

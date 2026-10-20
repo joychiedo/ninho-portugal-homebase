@@ -4,6 +4,20 @@ export type Lang = "en" | "pt";
 export type L = { en: string; pt: string };
 
 const en = {
+  "nav.main": "Main navigation",
+  "nav.mobile": "Mobile navigation",
+  "hero.alt": "Lisbon street with tiled façades",
+  "explore.priceError": "Minimum price must not exceed maximum price.",
+  "prop.imageNote": "Illustrative imagery, not verified photographs of this fictional listing. Shared images may appear in other sample listings.",
+  "dir.remote": "Remote",
+  "dir.lisbon": "Lisbon",
+  "error.title": "This page didn’t load",
+  "error.body": "Something went wrong. Try again or return to NINHO.",
+  "error.retry": "Try again",
+  "error.home": "Go home",
+  "notFound.title": "Page not found",
+  "notFound.body": "This page does not exist in the NINHO demo.",
+
   "nav.explore": "Explore properties",
   "nav.professionals": "Professionals",
   "nav.dashboard": "Buyer workspace",
@@ -206,6 +220,20 @@ const en = {
 export type TKey = keyof typeof en;
 
 const pt: Record<TKey, string> = {
+  "nav.main": "Navegação principal",
+  "nav.mobile": "Navegação móvel",
+  "hero.alt": "Rua de Lisboa com fachadas em azulejo",
+  "explore.priceError": "O preço mínimo não pode ser superior ao preço máximo.",
+  "prop.imageNote": "Imagens ilustrativas, não são fotografias verificadas deste anúncio fictício. Algumas imagens são partilhadas entre anúncios de exemplo.",
+  "dir.remote": "Remoto",
+  "dir.lisbon": "Lisboa",
+  "error.title": "Não foi possível carregar esta página",
+  "error.body": "Ocorreu um erro. Tente novamente ou volte ao NINHO.",
+  "error.retry": "Tentar novamente",
+  "error.home": "Voltar ao início",
+  "notFound.title": "Página não encontrada",
+  "notFound.body": "Esta página não existe na demonstração do NINHO.",
+
   "nav.explore": "Explorar imóveis",
   "nav.professionals": "Profissionais",
   "nav.dashboard": "Área do comprador",
@@ -422,7 +450,9 @@ export function formatPrice(value: number, lang: Lang) {
 }
 
 export function formatDate(iso: string, lang: Lang, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }) {
-  return new Intl.DateTimeFormat(lang === "pt" ? "pt-PT" : "en-GB", opts).format(new Date(iso));
+  // Avoid runtime-specific weekday punctuation and implicit device time zones.
+  const value = new Date(/(?:Z|[+-]\d{2}:\d{2})$/.test(iso) ? iso : `${iso.length === 10 ? `${iso}T00:00:00` : iso}Z`);
+  return new Intl.DateTimeFormat(lang === "pt" ? "pt-PT" : "en-GB", { timeZone: "UTC", ...opts }).format(value).replaceAll(",", "").replace(/\s+/g, " ");
 }
 
 type Ctx = {
@@ -439,15 +469,17 @@ const I18nContext = createContext<Ctx | null>(null);
 export function I18nProvider({ children }: { children: ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
   useEffect(() => {
-    const saved = window.localStorage.getItem("ninho-lang");
-    if (saved === "en" || saved === "pt") setLangState(saved);
+    try {
+      const saved = window.localStorage.getItem("ninho-lang");
+      if (saved === "en" || saved === "pt") setLangState(saved);
+    } catch { /* Keep the language switch available without storage. */ }
   }, []);
   useEffect(() => {
     document.documentElement.lang = lang === "pt" ? "pt-PT" : "en";
   }, [lang]);
   const setLang = useCallback((l: Lang) => {
     setLangState(l);
-    window.localStorage.setItem("ninho-lang", l);
+    try { window.localStorage.setItem("ninho-lang", l); } catch { /* In-memory locale remains available. */ }
   }, []);
   const value: Ctx = {
     lang,
@@ -464,4 +496,8 @@ export function useI18n() {
   const c = useContext(I18nContext);
   if (!c) throw new Error("useI18n outside provider");
   return c;
+}
+
+export function localizeLocation(location: string, lang: Lang) {
+  return lang === "en" ? location.replaceAll("Lisboa", "Lisbon").replaceAll("remoto", "remote") : location;
 }
