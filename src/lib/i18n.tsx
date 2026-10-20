@@ -450,7 +450,9 @@ export function formatPrice(value: number, lang: Lang) {
 }
 
 export function formatDate(iso: string, lang: Lang, opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }) {
-  return new Intl.DateTimeFormat(lang === "pt" ? "pt-PT" : "en-GB", opts).format(new Date(iso));
+  // Avoid runtime-specific weekday punctuation and implicit device time zones.
+  const value = new Date(/(?:Z|[+-]\d{2}:\d{2})$/.test(iso) ? iso : `${iso.length === 10 ? `${iso}T00:00:00` : iso}Z`);
+  return new Intl.DateTimeFormat(lang === "pt" ? "pt-PT" : "en-GB", { timeZone: "UTC", ...opts }).format(value).replaceAll(",", "").replace(/\s+/g, " ");
 }
 
 type Ctx = {

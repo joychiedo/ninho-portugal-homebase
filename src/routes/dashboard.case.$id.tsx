@@ -81,7 +81,7 @@ function CasePage() {
                       <p className="text-xs text-muted-foreground">{t("case.due", { d: date(x.due) })} · {t("case.owner", { name: getPro(x.proId)?.name ?? "" })}</p>
                     </div>
                     <label className="sr-only" htmlFor={`st-${x.id}`}>{t("case.status")}</label>
-                    <select id={`st-${x.id}`} value={x.status} onChange={(e) => setTaskStatus(x.id, e.target.value as TaskStatus)} className={`${inputCls} w-auto py-1.5`}>
+                    <select id={`st-${x.id}`} value={x.status} onChange={(e) => setTaskStatus(x.id, e.target.value as TaskStatus)} className={cn(inputCls, "w-auto max-w-full py-1.5")}>
                       {(["todo", "in_progress", "done"] as const).map((s) => <option key={s} value={s}>{t(`status.${s}`)}</option>)}
                     </select>
                   </li>
