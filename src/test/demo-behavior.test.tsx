@@ -23,7 +23,7 @@ describe("Buyer journey rules", () => {
     expect(progressOf(result.current.tasks)).toBe(25);
     act(() => result.current.setTaskStatus("t3", "done"));
     expect(progressOf(result.current.tasks)).toBe(38);
-    expect(result.current.activity[0].text.en).toBe('“Review land registry certificate” marked as done');
+    expect(result.current.activity[0]?.text.en).toBe('“Review land registry certificate” marked as done');
     expect(nextTask(result.current.tasks)?.id).toBe("t4");
   });
   it("persists favourites through remount and logs a single toggle", async () => {
@@ -44,7 +44,7 @@ describe("Buyer journey rules", () => {
   });
   it("restores only valid task statuses without replacing sample facts", () => {
     expect(restoredTasks([{ id: "t3", status: "done", title: { en: "fake" } }, { id: "t4", status: "bogus" }])[2]).toEqual({ ...buyerCase.tasks[2], status: "done" });
-    expect(restoredTasks([{ id: "t4", status: "bogus" }])[3].status).toBe("todo");
+    expect(restoredTasks([{ id: "t4", status: "bogus" }])[3]?.status).toBe("todo");
   });
   it("has no recommendation when all tasks are done", () => expect(nextTask(buyerCase.tasks.map(t => ({ ...t, status: "done" })))).toBeUndefined());
 });
