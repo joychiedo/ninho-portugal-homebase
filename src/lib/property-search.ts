@@ -1,11 +1,11 @@
 import { FEATURES, REGIONS, TYPES, properties } from "@/data/properties";
 
-export type PropertySearch = { location?: string; type?: string; min?: number; max?: number; beds?: number; features?: string; sort?: string };
+export type PropertySearch = { location?: string | undefined; type?: string | undefined; min?: number | undefined; max?: number | undefined; beds?: number | undefined; features?: string | undefined; sort?: string | undefined };
 const choice = (v: unknown, options: readonly string[]) => typeof v === "string" && options.includes(v) ? v : undefined;
 const number = (v: unknown) => (typeof v === "number" || typeof v === "string") && v !== "" && Number.isFinite(Number(v)) && Number(v) >= 0 ? Number(v) : undefined;
 export function validatePropertySearch(s: Record<string, unknown>): PropertySearch {
-  const features = typeof s.features === "string" ? [...new Set(s.features.split(",").filter(f => FEATURES.some(x => x === f)))].join(",") : "";
-  return { location: choice(s.location, REGIONS), type: choice(s.type, TYPES), min: number(s.min), max: number(s.max), beds: number(s.beds), features: features || undefined, sort: choice(s.sort, ["priceAsc", "priceDesc", "area"]) };
+  const features = typeof s["features"] === "string" ? [...new Set(s["features"].split(",").filter(f => FEATURES.some(x => x === f)))].join(",") : "";
+  return { location: choice(s["location"], REGIONS), type: choice(s["type"], TYPES), min: number(s["min"]), max: number(s["max"]), beds: number(s["beds"]), features: features || undefined, sort: choice(s["sort"], ["priceAsc", "priceDesc", "area"]) };
 }
 export function searchProperties(s: PropertySearch) {
   const features = s.features?.split(",") ?? [];

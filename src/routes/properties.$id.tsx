@@ -11,7 +11,7 @@ import { RequestModal } from "@/components/RequestModal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/properties/$id")({
-  validateSearch: (s: Record<string, unknown>) => ({ ...validatePropertySearch(s), returnTo: s.returnTo === "search" ? "search" : undefined }),
+  validateSearch: (s: Record<string, unknown>): ReturnType<typeof validatePropertySearch> & { returnTo?: string | undefined } => ({ ...validatePropertySearch(s), returnTo: s["returnTo"] === "search" ? "search" : undefined }),
   loader: ({ params }) => {
     const p = getProperty(params.id);
     if (!p) throw notFound();
