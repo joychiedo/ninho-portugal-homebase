@@ -4,6 +4,8 @@ import { Bath, BedDouble, Heart, Maximize, Menu, X } from "lucide-react";
 import { useI18n, type L } from "@/lib/i18n";
 import { useStore } from "@/lib/store";
 import type { Property } from "@/data/properties";
+import { Button } from "@/components/ui/button";
+import type { PropertySearch } from "@/lib/property-search";
 import { cn } from "@/lib/utils";
 
 export function Wordmark() {
@@ -19,19 +21,19 @@ export function LangToggle({ className }: { className?: string }) {
   return (
     <div role="group" aria-label={t("lang.label")} className={cn("inline-flex border border-border text-xs", className)}>
       {(["en", "pt"] as const).map((l) => (
-        <button
+        <Button variant="ghost"
           key={l}
           type="button"
           onClick={() => setLang(l)}
           aria-pressed={lang === l}
           lang={l === "pt" ? "pt-PT" : "en"}
           className={cn(
-            "px-2.5 py-1.5 font-medium tracking-wide transition-colors",
+            "h-auto rounded-none px-2.5 py-1.5 font-medium tracking-wide transition-colors",
             lang === l ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground",
           )}
         >
           {l === "en" ? "EN" : "PT"}
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -56,7 +58,7 @@ export function SiteHeader() {
       <div className="border-b border-border bg-secondary px-4 py-1.5 text-center text-xs text-muted-foreground">{t("demo.banner")}</div>
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8">
         <Wordmark />
-        <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
+        <nav aria-label={t("nav.main")} className="hidden items-center gap-8 md:flex">
           {navItems.map((n) => (
             <Link
               key={n.to}
@@ -71,7 +73,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-3 md:hidden">
           <LangToggle />
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setOpen((o) => !o)}
             aria-expanded={open}
@@ -80,11 +82,11 @@ export function SiteHeader() {
             className="p-2"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          </Button>
         </div>
       </div>
       {open && (
-        <nav id="mobile-nav" aria-label="Mobile" className="border-t border-border bg-background px-5 py-4 md:hidden">
+        <nav id="mobile-nav" aria-label={t("nav.mobile")} className="border-t border-border bg-background px-5 py-4 md:hidden">
           {navItems.map((n) => (
             <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block border-b border-border py-3 font-serif text-xl last:border-0">
               {t(n.key)}
@@ -142,18 +144,18 @@ export function FavButton({ id, name, variant = "icon" }: { id: string; name: L;
   const aria = t(on ? "prop.unsaveAria" : "prop.saveAria", { name: l(name) });
   if (variant === "full")
     return (
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => toggleFav(id, name)}
         aria-pressed={on}
-        className={cn("inline-flex items-center gap-2 border px-4 py-2.5 text-sm transition-colors", on ? "border-terracotta bg-terracotta-soft text-foreground" : "border-border hover:border-foreground")}
+        className={cn("h-auto justify-start whitespace-normal inline-flex items-center gap-2 border px-4 py-2.5 text-sm transition-colors", on ? "border-terracotta bg-terracotta-soft text-foreground" : "border-border hover:border-foreground")}
       >
         <Heart className={cn("h-4 w-4", on && "fill-terracotta text-terracotta")} />
         {on ? t("prop.saved") : t("prop.save")}
-      </button>
+      </Button>
     );
   return (
-    <button
+    <Button variant="ghost"
       type="button"
       onClick={(e) => {
         e.preventDefault();
@@ -162,10 +164,10 @@ export function FavButton({ id, name, variant = "icon" }: { id: string; name: L;
       }}
       aria-pressed={on}
       aria-label={aria}
-      className="flex h-9 w-9 items-center justify-center border border-border bg-card"
+      className="flex h-11 w-11 p-0 items-center justify-center border border-border bg-card"
     >
       <Heart className={cn("h-4 w-4", on ? "fill-terracotta text-terracotta" : "text-foreground")} />
-    </button>
+    </Button>
   );
 }
 
@@ -180,7 +182,7 @@ export function Specs({ p, className }: { p: Property; className?: string }) {
   );
 }
 
-export function PropertyCard({ p }: { p: Property }) {
+export function PropertyCard({ p, search }: { p: Property; search?: PropertySearch }) {
   const { t, l, price } = useI18n();
   return (
     <article className="group relative flex flex-col border border-border bg-card">
@@ -193,7 +195,7 @@ export function PropertyCard({ p }: { p: Property }) {
       <div className="flex flex-1 flex-col p-5">
         <p className="eyebrow">{p.area} · {t(`loc.${p.region}`)}</p>
         <h3 className="mt-2 text-xl leading-snug">
-          <Link to="/properties/$id" params={{ id: p.id }} className="after:absolute after:inset-0">
+          <Link to="/properties/$id" params={{ id: p.id }} search={{ ...search, returnTo: search ? "search" : undefined }} className="after:absolute after:inset-0">
             {l(p.title)}
           </Link>
         </h3>

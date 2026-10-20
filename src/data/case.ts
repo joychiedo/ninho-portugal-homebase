@@ -128,7 +128,7 @@ export const buyerCase: BuyerCase = {
   appointments: [
     { id: "a1", title: { en: "Due diligence review", pt: "Revisão da verificação jurídica" }, date: "2026-10-23T10:00:00", mode: { en: "Video call", pt: "Videochamada" }, proId: "ines-carvalho" },
     { id: "a2", title: { en: "Bank meeting — mortgage application", pt: "Reunião no banco — pedido de crédito" }, date: "2026-10-29T15:30:00", mode: { en: "In person, Lisbon", pt: "Presencial, Lisboa" }, proId: "rui-mendes" },
-    { id: "a3", title: { en: "Second viewing with surveyor", pt: "Segunda visita com vistoria" }, date: "2026-11-05T11:00:00", mode: { en: "At the property", pt: "No imóvel" }, proId: "sofia-almeida" },
+    { id: "a3", title: { en: "Second viewing with relocation consultant", pt: "Segunda visita com consultora de mudança" }, date: "2026-11-05T11:00:00", mode: { en: "At the property", pt: "No imóvel" }, proId: "sofia-almeida" },
   ],
   documents: [
     { id: "d1", title: { en: "Passport copies", pt: "Cópias dos passaportes" }, status: "received", proId: "ines-carvalho" },

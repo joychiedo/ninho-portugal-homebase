@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowRight, Compass, FileCheck2, Lock, Scale, Search, Users } from "lucide-react";
 import hero from "@/assets/hero.jpg";
-import { useI18n } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { useI18n, localizeLocation } from "@/lib/i18n";
 import { properties, REGIONS, TYPES } from "@/data/properties";
 import { professionals } from "@/data/case";
 import { Page, PropertyCard, btnOutline, btnPrimary, inputCls } from "@/components/site";
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/")({
 const PRICE_STEPS = [500000, 750000, 1000000, 1500000, 2500000];
 
 function Home() {
-  const { t, price } = useI18n();
+  const { t, price, lang } = useI18n();
   const navigate = useNavigate();
   const [location, setLocation] = useState("");
   const [type, setType] = useState("");
@@ -47,7 +48,7 @@ function Home() {
           </div>
         </div>
         <div className="lg:col-span-6">
-          <img src={hero} alt="Lisbon street with tiled façades" width={1600} height={1008} className="aspect-[4/3] w-full object-cover lg:aspect-[5/4]" />
+          <img src={hero} alt={t("hero.alt")} width={1600} height={1008} className="aspect-[4/3] w-full object-cover lg:aspect-[5/4]" />
         </div>
       </section>
 
@@ -81,7 +82,7 @@ function Home() {
               {PRICE_STEPS.map((p) => <option key={p} value={p}>{price(p)}</option>)}
             </select>
           </div>
-          <button type="submit" className={btnPrimary}><Search className="h-4 w-4" />{t("search.submit")}</button>
+          <Button type="submit" className={btnPrimary}><Search className="h-4 w-4" />{t("search.submit")}</Button>
         </form>
       </section>
 
@@ -130,7 +131,7 @@ function Home() {
               <span className="flex h-11 w-11 shrink-0 items-center justify-center bg-forest-soft font-serif text-primary">{p.initials}</span>
               <div className="min-w-0 flex-1">
                 <p className="font-medium">{p.name}</p>
-                <p className="text-sm text-muted-foreground">{t(`cat.${p.category}`)} · {p.location}</p>
+                <p className="text-sm text-muted-foreground">{t(`cat.${p.category}`)} · {localizeLocation(p.location, lang)}</p>
               </div>
               <span className="text-[11px] uppercase tracking-wider text-muted-foreground">{t("dir.fictional")}</span>
             </li>

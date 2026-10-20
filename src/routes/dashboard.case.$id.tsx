@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Check, Circle } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { Button } from "@/components/ui/button";
+import { useI18n, localizeLocation } from "@/lib/i18n";
 import { progressOf, useStore } from "@/lib/store";
 import { buyerCase, getPro, type TaskStatus } from "@/data/case";
 import { getProperty } from "@/data/properties";
@@ -23,11 +24,12 @@ const docCls = { requested: "bg-terracotta-soft", received: "bg-forest-soft text
 
 function CasePage() {
   const { id } = Route.useParams();
-  const { t, l, date, price } = useI18n();
+  const { t, l, date, price, lang } = useI18n();
   const { tasks, setTaskStatus, activity } = useStore();
   if (id !== buyerCase.id)
     return <Page><div className="mx-auto max-w-xl px-5 py-24 text-center"><h1 className="text-3xl">{t("case.notFound")}</h1><Link to="/dashboard" className="mt-6 inline-block underline">{t("case.back")}</Link></div></Page>;
-  const prop = getProperty(buyerCase.propertyId)!;
+  const prop = getProperty(buyerCase.propertyId);
+  if (!prop) return <Page><p className="px-5 py-24">{t("prop.notFound")}</p></Page>;
   const pct = progressOf(tasks);
 
   return (
@@ -68,10 +70,10 @@ function CasePage() {
                 const done = x.status === "done";
                 return (
                   <li key={x.id} className="flex flex-wrap items-center gap-4 py-4">
-                    <button type="button" onClick={() => setTaskStatus(x.id, done ? "todo" : "done")} aria-label={t(done ? "case.markTodo" : "case.markDone", { t: l(x.title) })}
-                      className={cn("flex h-6 w-6 shrink-0 items-center justify-center border", done ? "border-primary bg-primary text-primary-foreground" : "border-input")}>
+                    <Button variant="ghost" type="button" onClick={() => setTaskStatus(x.id, done ? "todo" : "done")} aria-label={t(done ? "case.markTodo" : "case.markDone", { t: l(x.title) })}
+                      className={cn("flex h-10 w-10 p-0 shrink-0 items-center justify-center border", done ? "border-primary bg-primary text-primary-foreground" : "border-input")}>
                       {done ? <Check className="h-4 w-4" /> : <Circle className="h-2 w-2 opacity-0" />}
-                    </button>
+                    </Button>
                     <div className="min-w-0 flex-1">
                       <p className={cn(done && "text-muted-foreground line-through")}>{l(x.title)}</p>
                       <p className="text-xs text-muted-foreground">{t("case.due", { d: date(x.due) })} · {t("case.owner", { name: getPro(x.proId)?.name ?? "" })}</p>
@@ -103,7 +105,7 @@ function CasePage() {
               {buyerCase.proIds.map(getPro).map((p) => p && (
                 <li key={p.id} className="border border-border bg-card p-4">
                   <p className="font-medium">{p.name}</p>
-                  <p className="text-xs text-muted-foreground">{t(`cat.${p.category}`)} · {p.location} · {t("dir.fictional")}</p>
+                  <p className="text-xs text-muted-foreground">{t(`cat.${p.category}`)} · {localizeLocation(p.location, lang)} · {t("dir.fictional")}</p>
                 </li>
               ))}
             </ul>
