@@ -4,8 +4,15 @@ import { buyerCase } from "@/data/case";
 import { nextTask, restoredTasks } from "@/lib/demo-state";
 import { searchProperties, validatePropertySearch } from "@/lib/property-search";
 import { progressOf, StoreProvider, useStore } from "@/lib/store";
+import { formatDate } from "@/lib/i18n";
 
 beforeEach(() => sessionStorage.clear());
+describe("Localized date formatting", () => {
+  it("keeps appointment text stable across server and browser runtimes", () => {
+    expect(formatDate("2026-10-23T10:00:00", "en", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })).toBe("Fri 23 Oct 10:00");
+    expect(formatDate("2026-10-23", "pt")).toBe("23/10/2026");
+  });
+});
 describe("Property discovery rules", () => {
   it("filters location", () => expect(searchProperties({ location: "lisbon" }).map(p => p.id)).toEqual(["principe-real-apartment"]));
   it("filters inclusive price range", () => expect(searchProperties({ min: 640000, max: 720000 }).map(p => p.price)).toEqual([640000, 720000]));

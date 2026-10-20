@@ -13,3 +13,4 @@
 - Centralize property URL validation and filtering in the search helper so deep links and UI controls use identical rules.
 - Derive progress and next recommended tasks from current task state; milestones and document statuses stay illustrative.
 - Use accessible dialog primitives for requests and cancel pending demo recording on dismissal so keyboard and cancellation behavior stays reliable.
+- Normalize localized date punctuation and use explicit UTC for illustrative appointments so SSR and browser text remain identical.

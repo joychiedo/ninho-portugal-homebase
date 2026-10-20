@@ -27,7 +27,15 @@ export const Route = createFileRoute("/properties/$id")({
           { property: "og:title", content: `${loaderData.title} — NINHO` },
           { property: "og:description", content: loaderData.summary },
         ]
-      : [{ title: "Property unavailable — NINHO" }, { name: "robots", content: "noindex" }],
+      : [
+          { title: "Property unavailable — NINHO" },
+          { name: "description", content: "This sample property is not available in the NINHO demo." },
+          { property: "og:title", content: "Property unavailable — NINHO" },
+          { property: "og:description", content: "This sample property is not available in the NINHO demo." },
+          { property: "og:type", content: "website" },
+          { name: "twitter:card", content: "summary_large_image" },
+          { name: "robots", content: "noindex" },
+        ],
   }),
   notFoundComponent: NotFound,
   component: Detail,
