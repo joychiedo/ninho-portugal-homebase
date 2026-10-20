@@ -1,0 +1,4 @@
+- [ ] Audit original requirements, translations, navigation and sample consistency.
+- [ ] Fix verified gaps without redesigning working sections.
+- [ ] Test the complete buyer journey, desktop/mobile layouts and edge states.
+- [ ] Report verified results and prototype limitations.
